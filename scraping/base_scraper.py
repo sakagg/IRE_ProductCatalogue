@@ -55,17 +55,11 @@ class BaseScraper(object):
 	# page: BeautifulSoup object of the page containing all product urls
 	# productList: A list of all valid product urls you wish to visit
 	def products(self, page):
-		links = page.find_all("div", "product-img")
-		for link in links:
-			curr_link = link.contents[1].get("href")
-			if curr_link.startswith("/Mobile_Accessories") or curr_link.startswith("/mobile_accessories"):
-				continue
-			else:
-				yield self.hostname + curr_link
+		return []
 
 	# process(page) -> status
 	# Process a prodcut page
 	# url: URL of the requested product page
 	# page: BeautifulSoup object of the corresponding product page
 	def process(self, url, page):
-		print url
+		return True
