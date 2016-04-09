@@ -13,9 +13,13 @@ import urllib
 class BaseScraper(object):
 	"""docstring for BaseScraper"""
 	# init function, nothing to explain here
-	def __init__(self):
+	def __init__(self,filepath):
 		self.visited = set()
 		self.queue = []
+		self.init_dump(filepath)
+
+	def init_dump(self,filepath):
+		self.dump = open(filepath,"w")
 
 	# fetch(url) -> page
 	# Fetches a url and returns the corresponding BeautifulSoup object
@@ -37,13 +41,14 @@ class BaseScraper(object):
 			for product_url in self.products(content):
 				if product_url not in self.visited:
 					content = self.fetch(product_url)
-					status = self.process(product_url, content)
+					status = self.process(product_url, content,self.dump)
 					if not status is False:
 						self.visited.add(product_url)
 						self.queue.append(product_url)
 			page = self.next()
 		for i in self.queue:
-			self.process(i, self.fetch(i))
+			self.process(i, self.fetch(i), self.dump)
+		self.dump.close()
 
 	# next() -> url
 	# url: URL of the next page containing the list of products
@@ -61,5 +66,5 @@ class BaseScraper(object):
 	# Process a prodcut page
 	# url: URL of the requested product page
 	# page: BeautifulSoup object of the corresponding product page
-	def process(self, url, page):
+	def process(self, url, page,dump):
 		return True
