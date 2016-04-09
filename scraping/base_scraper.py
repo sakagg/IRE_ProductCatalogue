@@ -16,9 +16,6 @@ class BaseScraper(object):
 	def __init__(self,filepath):
 		self.visited = set()
 		self.queue = []
-		self.init_dump(filepath)
-
-	def init_dump(self,filepath):
 		self.dump = open(filepath,"w")
 
 	# fetch(url) -> page
