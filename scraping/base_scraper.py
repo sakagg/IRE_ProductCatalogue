@@ -63,5 +63,6 @@ class BaseScraper(object):
 	# Process a prodcut page
 	# url: URL of the requested product page
 	# page: BeautifulSoup object of the corresponding product page
-	def process(self, url, page,dump):
+	# dump: dump file handler
+	def process(self, url, page, dump):
 		return True
