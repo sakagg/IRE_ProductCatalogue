@@ -9,13 +9,26 @@ from bs4 import BeautifulSoup
 import codecs
 import sys
 import urllib
+from reppy.cache import RobotsCache
 
 class BaseScraper(object):
 	"""docstring for BaseScraper"""
-	# init function, nothing to explain here
-	def __init__(self):
+	# init function
+	# hostname: Hostname of the site you'll be crawling.
+	# Required to read robots.txt and set proper permissions
+	# for Crawl-delay and Allowed URLs
+	def __init__(self, hostname):
+		self.hostname = hostname
 		self.visited = set()
 		self.queue = []
+		self.headers = {
+			"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1"
+		}
+		self.crawl_rules = RobotsCache().fetch(hostname)
+		self.delay = self.crawl_rules.delay('*')
+		if self.delay is None:
+			self.delay = 0.0
+		self.last_fetch_time = 0
 
 	# close function. Like a destructor
 	# Any cleanup such as deleting temporary files goes here
@@ -27,7 +40,13 @@ class BaseScraper(object):
 	# url: URL of the age you'd like to fetch
 	# page: BeautifulSoup object of the requested page
 	def fetch(self, url):
-		r = requests.get(url)
+		time_to_sleep = max(0, self.last_fetch_time + self.delay - time.time())
+		time.sleep(time_to_sleep)
+		if rules.allowed(url, '*'):
+			r = requests.get(url, headers = self.headers)
+		else:
+			raise "FetchError"
+		self.last_fetch_time = time.time()
 		return BeautifulSoup(r.content)
 
 	# run() -> None

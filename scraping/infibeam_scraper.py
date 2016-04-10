@@ -5,8 +5,8 @@ import sys
 class InfibeamScraper(BaseScraper):
 	"""docstring for InfibeamScraper"""
 	def __init__(self, filepath):
-		BaseScraper.__init__(self)
-		self.hostname = "http://www.infibeam.com"
+		hostname = "http://www.infibeam.com"
+		BaseScraper.__init__(self, hostname)
 		self.page_no = 1
 		self.dump = open(filepath, "w")
 
