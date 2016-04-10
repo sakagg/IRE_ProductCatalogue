@@ -15,7 +15,7 @@ class InfibeamScraper(BaseScraper):
 		BaseScraper._close(self)
 
 	def next(self):
-		if self.page_no > 2:
+		if self.page_no > 22:
 			return False
 		url = self.hostname+"/Mobiles/search?sort=relevance&page="+str(self.page_no)
 		self.page_no += 1
