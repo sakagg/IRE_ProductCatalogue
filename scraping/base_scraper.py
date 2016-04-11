@@ -42,7 +42,7 @@ class BaseScraper(object):
 	def fetch(self, url):
 		time_to_sleep = max(0, self.last_fetch_time + self.delay - time.time())
 		time.sleep(time_to_sleep)
-		if rules.allowed(url, '*'):
+		if self.crawl_rules.allowed(url, '*'):
 			r = requests.get(url, headers = self.headers)
 		else:
 			raise "FetchError"
