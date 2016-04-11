@@ -1,0 +1,15 @@
+extends layout
+
+block content
+	hr
+	h4 Products by #{vendor}
+	div.row				
+		div#content.row
+			- each variable,i in mobiles
+				div.col-md-4
+					a.thumbnail(href="/mobiles/#{variable._id}", target="_blank")
+						img(src="#{variable.image == 'No image' ? '/images/no-image.png' : variable.image}", style="width:180px !important; height: 280px !important")
+						div.caption
+							h3 #{variable.name.substring(0,20)}...
+							p #{variable.price.pop()}
+							p #{variable.vendor}		

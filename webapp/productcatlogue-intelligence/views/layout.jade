@@ -1,0 +1,40 @@
+doctype html
+html
+  head
+    title= title
+    link(rel="stylesheet", href="/stylesheets/bootstrap.min.css")
+    link(rel="stylesheet", href="/stylesheets/style.css")    
+  body
+    nav.navbar.navbar-default
+        .container-fluid
+            .navbar-header
+                a.navbar-brand(href="/") 
+                     img(alt="Brand" src="/images/newlogo.png" width="35px", height="35px")
+            div
+                ul.nav.navbar-nav
+                    li
+                        a(href="/home") Home
+                    li
+                        a(href="/vendors") Vendor Analytics
+                    li
+                        a(href="/vendors/all") All Vendors
+    div.row
+        if errorMessage
+            div.alert.alert-danger(role="alert")
+                button.close(type="button", data-dismiss="alert", aria-label="Close")
+                    span(aria-hidden="true") &times;
+                | #{errorMessage}
+        if successMessage
+            div.alert.alert-success(role="alert")
+                button.close(type="button", data-dismiss="alert", aria-label="Close")
+                    span(aria-hidden="true") &times;
+                | #{successMessage}
+        h3 Product Catloging and Intelligence
+        block content
+
+    block importScripts
+        script(src="/javascripts/jquery.min.js")
+        script(src="/javascripts/bootstrap.min.js")        
+        script(src="http://d3js.org/d3.v3.min.js")
+        script(src="/javascripts/demo_bar.js")
+    block inPageScript

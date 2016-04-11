@@ -1,0 +1,17 @@
+extends ./landing
+
+block content
+    div.col-md-12
+        form#formLogin(method="POST", action="/login")
+            div.form-group
+                label(for="username") Username: 
+                input#inputUsername.form-control(type="text", name="username")
+            div.form-group
+                label(for="password") Password: 
+                input#inputPassword.form-control(type="password", name="password")
+            div.form-group
+                div.row
+                    div.col-md-6
+                        input.btn.btn-success(type="submit", value="Log In")
+                    div.col-md-offset-8
+                        a.btn.btn-success(href="register") Signup

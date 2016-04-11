@@ -1,0 +1,57 @@
+extends layout
+
+block content
+	hr
+	div.row				
+		div.row		
+			div.col-md-12
+				button#load.pull-right.btn.btn-success(href="/mobiles/load") Load dump
+				div.col-md-4
+					div.input-group.pull-right
+						select#searchOption.form-control
+							option(value="name") Name
+							option(value="vendor") Vendor
+							option(value="specs") Specification
+				div.col-md-4
+					div.input-group
+						input#searchText.form-control(type="text")
+						span.input-group-btn
+							button#searchBtn.btn.btn-default(type="button") Search					
+		div#content.row
+			- each variable,i in mobiles
+				div.col-md-4
+					a.thumbnail(href="/mobiles/#{variable._id}", target="_blank")
+						img(src="#{variable.image == 'No image' ? '/images/no-image.png' : variable.image}", style="width:180px !important; height: 280px !important")
+						div.caption
+							h3 #{variable.name.substring(0,20)}...
+							p #{variable.price.pop()}
+							p #{variable.vendor}		
+
+block inPageScript
+	script.
+		$(document).ready(function(){
+			$("#load").click(function(){
+				var loc = prompt("Enter dump path");
+				$.post("/mobiles/load",{"loc" : loc},function(data){
+					if(data == "error"){
+						alert("Error: dump was not loaded successfully");
+					} else {
+						alert("Dump imported successfully");
+						window.reload();
+					}
+				})
+			});
+			$("#searchBtn").click(function(){				
+				var search = $("#searchText").val();
+				var opt = $("#searchOption").val();
+				//alert(opt);
+				if (search.trim() == ""){
+					alert("enter query");
+					return false;
+				}
+				$.get("/mobiles/get/"+search+"/"+opt,function(data){
+					$("#content").html(data);
+				});
+				return false;				
+			});
+		});	

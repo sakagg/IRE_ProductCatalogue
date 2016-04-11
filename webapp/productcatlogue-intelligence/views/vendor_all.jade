@@ -1,0 +1,26 @@
+extends layout
+
+block content
+	hr
+	div.col-md-12
+		h4 All Vendors
+	div.row		
+		- each variable,i in bundle
+			div.col-md-3
+				a.thumbnail(href="/vendors/all/#{variable[0]}")
+					div.caption
+						ul.list-group
+							li.list-group-item
+								span.badge #{variable[1]}
+								!{variable[0]}
+
+			
+				
+block inPageScript
+	script.
+		$(document).ready(function(){
+			$.get("/vendors/stats", function(data){
+				InitChart(data,"visualisation");
+			});
+		});
+	

@@ -1,0 +1,15 @@
+extends layout
+
+block content
+	hr
+	h4 Vendor vs Total number of phones offered
+	<svg id="visualisation" width="1000" height="500"></svg>
+				
+block inPageScript
+	script.
+		$(document).ready(function(){
+			$.get("/vendors/stats", function(data){
+				InitChart(data,"visualisation");
+			});
+		});
+	

@@ -1,0 +1,65 @@
+extends layout
+
+block content
+	hr
+	div.row		
+		div.col-md-12
+			div.col-md-4
+				div.thumbnail
+					img(src="#{mobile.image}", style="width:180px !important; height: 280px !important")
+					div.caption
+						h3 #{mobile.name.substring(0,20)}...
+						p #{mobile.price.pop()}
+						p #{mobile.vendor}		
+	div.row
+		ul.nav.nav-tabs
+			li.active
+				a(data-toggle="tab",href="#description") Description
+			li
+				a(data-toggle="tab",href="#specifications") Specifications
+			li
+				a(data-toggle="tab",href="#vendors") All Vendors
+			li
+				a#getStats(data-toggle="tab",href="#stats") Price Stats
+
+		div.tab-content		
+			div#stats.tab-pane.fade
+				
+			div#specifications.tab-pane.fade
+				table.table
+					tr
+						th Feature
+						th Value					
+					- each variable,i in specs_data
+						tr
+							td #{variable[0]}
+							td #{variable[1]}								
+			div#vendors.tab-pane.fade			
+				table.table.col-md-6
+					tr
+						th Vendor name
+						th Price
+						th Link					
+					- each variable,i in other_vendors
+						tr
+							td #{variable[2]}
+							td #{variable[1]}
+							td 
+								a(href="#{variable[0]}") click
+
+
+			div#description.tab-pane.fade.in.active 
+				!{ mobile.description }
+				
+block inPageScript
+	script.
+		$(document).ready(function(){
+			$("#getStats").click(function(){
+				$("#stats").html('<svg id="visualisation" width="1000" height="500"></svg>');
+				$.get("/mobiles/stats/#{id}", function(data){
+					data = eval("x = "+data);
+					InitChart(data,"visualisation");
+				});
+			});
+		});
+	
