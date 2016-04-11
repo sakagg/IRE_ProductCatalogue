@@ -24,7 +24,6 @@ mongoose.connect("mongodb://localhost/iredb", function(err){
 //wire-in the models
 
 //user model
-var userModel = require('./models/users');
 var mobileModel = require('./models/mobiles');
 
 // We use mongodb to store session info
@@ -54,11 +53,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 var routes = require('./routes/index');
 var mobiles = require('./routes/mobiles');
 var vendors = require('./routes/vendors');
-var products = require('./routes/products');
+
 app.use('/', routes);
 app.use('/mobiles', mobiles);
 app.use('/vendors', vendors);
-app.use('/products', products);
 
 //app.use('/users', users);
 

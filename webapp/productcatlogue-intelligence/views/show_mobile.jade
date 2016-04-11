@@ -1,6 +1,7 @@
 extends layout
 
 block content
+	h3 #{mobile.name}
 	hr
 	div.row		
 		div.col-md-12
@@ -24,7 +25,7 @@ block content
 
 		div.tab-content		
 			div#stats.tab-pane.fade
-				
+				div#my_chart(style="width: 1000px; height: 1000px;")
 			div#specifications.tab-pane.fade
 				table.table
 					tr
@@ -51,14 +52,38 @@ block content
 			div#description.tab-pane.fade.in.active 
 				!{ mobile.description }
 				
-block inPageScript
+block inPageScript	
+	script(src="https://www.google.com/jsapi")
 	script.
+		google.load("visualization", "1", {packages:["corechart"]});
+		   //google.setOnLoadCallback(drawChart);
+		   function drawChart(input_data) {
+		    // Create and populate the data table.
+		    var data = google.visualization.arrayToDataTable(input_data);		      
+			
+		    var options = {
+		      title: 'Time vs Price',
+		      width: 1000,
+		      height: 1000,
+		      hAxis: {
+					direction:-1,
+					slantedText:true,
+					slantedTextAngle:90 // here you can even use 180
+				}
+		    };
+		     // Create and draw the visualization.
+			var chart = new google.visualization.ColumnChart(
+				document.getElementById('my_chart'));				
+			chart.draw(data, options);
+		  }
+
 		$(document).ready(function(){
 			$("#getStats").click(function(){
-				$("#stats").html('<svg id="visualisation" width="1000" height="500"></svg>');
+				//$("#stats").html('<svg id="visualisation" width="1000" height="500"></svg>');
 				$.get("/mobiles/stats/#{id}", function(data){
-					data = eval("x = "+data);
-					InitChart(data,"visualisation");
+					//data = eval("x = "+data);	
+					//InitChart(data,"visualisation");
+					drawChart(data);
 				});
 			});
 		});
