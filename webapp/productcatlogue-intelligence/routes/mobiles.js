@@ -120,7 +120,7 @@ router.get('/:id', function(req, res, next) {
 
 router.get('/refresh/:id', function(req, res, next) {
 	var id = req.params.id;
-	function puts(error, stdout, stderr) {res.send(stderr);}
+	function puts(error, stdout, stderr) {res.send("Status : "+stderr);}
 	exec("unset http_proxy; python ../../scraping/infibeam_scraper.py update " + id, puts);
 });
 
