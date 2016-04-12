@@ -1,5 +1,4 @@
 
-
 function InitChart(barData, selector) {
   if(!barData){
       barData = [{

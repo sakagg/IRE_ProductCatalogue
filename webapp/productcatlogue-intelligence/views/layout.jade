@@ -28,8 +28,7 @@ html
             div.alert.alert-success(role="alert")
                 button.close(type="button", data-dismiss="alert", aria-label="Close")
                     span(aria-hidden="true") &times;
-                | #{successMessage}
-        h3 Product Catloging and Intelligence
+                | #{successMessage}        
         block content
 
     block importScripts
@@ -37,4 +36,5 @@ html
         script(src="/javascripts/bootstrap.min.js")        
         script(src="http://d3js.org/d3.v3.min.js")
         script(src="/javascripts/demo_bar.js")
+
     block inPageScript

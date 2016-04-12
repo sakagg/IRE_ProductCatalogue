@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-var sha1 = require('sha1');
-var User = mongoose.model('User');
 var Mobile = mongoose.model('Mobile');
 
 /*get vendor list*/
@@ -55,10 +53,11 @@ router.get('/stats', function(req, res, next) {
         if (err) {
             next(err);
         } else {
-        	var bundle = []	
+        	var bundle = [["Person","Number of products"]]	
         	for(r of results){
         		(function(result){
-        			bundle.push({'x' : result._id, 'y' : result.count});	
+                    bundle.push([result._id, result.count]);    
+        			//bundle.push({'x' : result._id, 'y' : result.count});	
         		})(r);        		
         	}
             res.json(bundle);
