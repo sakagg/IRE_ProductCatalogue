@@ -1,15 +1,39 @@
 extends layout
 
 block content
+	h3 Vendor Analytics
 	hr
-	h4 Vendor vs Total number of phones offered
-	<svg id="visualisation" width="1000" height="500"></svg>
-				
+	div#my_chart(style="width: 1000px; height: 1000px;")
+
 block inPageScript
+	script(src="https://www.google.com/jsapi")
 	script.
+		google.load("visualization", "1", {packages:["corechart"]});
+		   //google.setOnLoadCallback(drawChart);
+		   function drawChart(input_data) {
+		    // Create and populate the data table.
+		    var data = google.visualization.arrayToDataTable(input_data);		      
+			
+		    var options = {
+		      title: 'Vendor vs Number of Products'
+		    };
+		     // Create and draw the visualization.
+			var chart = new google.visualization.BarChart(
+				document.getElementById('my_chart'))
+				google.visualization.events.addListener(chart, 'select', function () {
+				var selection = chart.getSelection();
+				var row = selection[0].row;
+				
+				//alert(data.getValue(row, 0));
+				window.open("/vendors/all/"+data.getValue(row, 0),"_blank");
+			});
+			chart.draw(data, options);
+		  }
+
 		$(document).ready(function(){
 			$.get("/vendors/stats", function(data){
-				InitChart(data,"visualisation");
+				drawChart(data);
+				//InitChart(data,"visualisation");
 			});
 		});
 	

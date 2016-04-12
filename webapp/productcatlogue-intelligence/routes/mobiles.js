@@ -1,8 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-var sha1 = require('sha1');
-var User = mongoose.model('User');
 var Mobile = mongoose.model('Mobile');
 var fs = require('fs');
 var filepath = "/Users/adityagaykar/Dropbox/Development/MtechCSE/Sem2/IRE/MajorProject/src/infibeam_dump_copy";
@@ -125,14 +123,14 @@ router.get('/stats/:id', function(req, res, next) {
 		var price = data.price;
 		var updated_on = data.updated_on;
 		var len = price.length;
-		var bundle = []
+		var bundle = [["Date","Price"]];
 		for(var i = 0; i < len; i++){
 			price[i] = price[i].replace(',',"");
 			var date = new Date(updated_on[i]);
-
-			bundle.push({'x' : date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds(),'y': price[i]});
+			bundle.push([date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds(), parseInt(price[i])])
+			//bundle.push({'x' : date.getDate()+"/"+(date.getMonth()+1)+"/"+(date.getYear()+1900)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds(),'y': price[i]});
 		}
-		res.send(JSON.stringify(bundle));
+		res.json(bundle);
 	});
 });
 
