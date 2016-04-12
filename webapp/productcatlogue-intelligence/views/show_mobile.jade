@@ -90,7 +90,11 @@ block inPageScript
 
 			$("#update").click(function(){
 				$.get("/mobiles/refresh/#{mobile._id}",function(data){
-					alert(data);
+					if(data == "Status : "){
+						alert("Resynced successfully.");
+						location.href = location.href;
+					} else
+						alert(data);
 				});
 			});
 		});

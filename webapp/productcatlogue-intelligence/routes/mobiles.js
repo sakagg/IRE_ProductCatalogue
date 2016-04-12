@@ -16,7 +16,6 @@ router.post('/load', function(req, res, next) {
 	  if (err || !data ) {
 	    error = true;
 	  }
-
 	  try{
 	  		var mobiles = data.split("*@*");
 		  for(var m of mobiles){
@@ -26,12 +25,13 @@ router.post('/load', function(req, res, next) {
 			  		continue;
 		  	(function(mobile){
 		  		var data = mobile.split("#@#");
-			  	var name = data[0],
+			  	var name = data[0],			  	
 			  	price = data[1],
 			  	vendor = data[2],
 			  	image = data[3],
 			  	description = data[4],
-			  	specs = data[5];
+			  	specs = data[5],
+			  	url = data[6];
 			  	//console.log(name+ " : "+ price +" : "+vendor);
 
 			  	Mobile.findOne({
@@ -43,6 +43,7 @@ router.post('/load', function(req, res, next) {
 			  			//console.log("inserting : "+name);
 		  				Mobile.create({
 					  		name: name,
+					  		url: url,
 					  		price: [price],
 					  		vendor: vendor,
 					  		image: image,
@@ -60,6 +61,7 @@ router.post('/load', function(req, res, next) {
 		  				mobile.updated_on.push(Date.now());
 			  			Mobile.update({_id: mobile._id},{
 			  				name: name,
+			  				url: url,
 					  		price: mobile.price,
 					  		vendor: mobile.vendor,
 					  		image: image,
