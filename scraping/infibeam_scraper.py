@@ -1,21 +1,27 @@
 from base_scraper import BaseScraper
 from sys import argv
 import sys
+import pymongo
+import math, time
+from bson.objectid import ObjectId
 
 class InfibeamScraper(BaseScraper):
 	"""docstring for InfibeamScraper"""
-	def __init__(self, filepath):
+	def __init__(self):
 		hostname = "http://www.infibeam.com"
 		BaseScraper.__init__(self, hostname)
 		self.page_no = 1
-		self.dump = open(filepath, "w")
+		self.mobiles = pymongo.MongoClient().iredb.mobiles
 
 	def _close(self):
-		self.dump.close()
 		BaseScraper._close(self)
 
+	def update(self, id):
+		url = self.mobiles.find_one({"_id": ObjectId(id)})["url"]
+		self.process(url, self.fetch(url), "update")
+
 	def next(self):
-		if self.page_no > 22:
+		if self.page_no > 21:
 			return False
 		url = self.hostname+"/Mobiles/search?sort=relevance&page="+str(self.page_no)
 		self.page_no += 1
@@ -27,10 +33,12 @@ class InfibeamScraper(BaseScraper):
 			curr_link = link.contents[1].get("href")
 			if curr_link.startswith("/Mobile_Accessories") or curr_link.startswith("/mobile_accessories"):
 				continue
+			elif self.mobiles.count({"url": self.hostname + curr_link}) > 0:
+				continue
 			else:
 				yield self.hostname + curr_link
 
-	def process(self, url, page):
+	def process(self, url, page, oper = "create"):
 		soup = page
 		data = {}
 		delimit = "#@#"
@@ -48,7 +56,7 @@ class InfibeamScraper(BaseScraper):
 		if data["name"] == "Error":
 			return False
 		try:
-			data["image"] = soup.find("img",{"class":"hidden"}).get("src")
+			data["image"] = soup.find("img",{"class":"inview"}).get("src")
 		except AttributeError:
 			data["image"] = "No image"
 		try:
@@ -85,12 +93,38 @@ class InfibeamScraper(BaseScraper):
 		data["description"] = data["description"].decode("utf8","ignore")
 		data["specs"] = data["specs"].decode("utf8","ignore")
 
-		# writing to dump
-		self.dump.write(data["name"]+delimit+data["price"]+delimit+data["vendor"]+delimit+data["image"]+delimit+data["description"]+delimit+data["specs"]+"*@*")
+		if oper == "create":
+			# writing to dump
+			print self.mobiles.insert({
+				"url": url,
+				"name": data["name"],
+				"price": [data["price"]],
+				"vendor": data["vendor"],
+				"image": data["image"],
+				"description": data["description"],
+				"specs": data["specs"],
+				"updated_on": [math.floor(time.time()*1000)]
+			})
+			print data["name"]
+		elif oper == "update":
+			mobile = self.mobiles.find_one({"url": url})
+			mobile["price"].append(data["price"])
+			mobile["updated_on"].append(math.floor(time.time()*1000))
+			self.mobiles.update({"_id": mobile["_id"]}, {
+				"url": url,
+				"name": data["name"],
+				"price": mobile["price"],
+				"vendor": data["vendor"],
+				"image": data["image"],
+				"description": data["description"],
+				"specs": data["specs"],
+				"updated_on": mobile["updated_on"]
+			})
 		return True
 
-if len(argv) == 2:
-	scraper = InfibeamScraper(argv[1])
-	scraper.run()
-else:
-	print "Error: filepath arg expected"
+if len(sys.argv) >= 2:
+	scraper = InfibeamScraper()
+	if sys.argv[1] == "create":
+		scraper.run()
+	elif sys.argv[1] == "update" and len(sys.argv) >= 3:
+		scraper.update(sys.argv[2])
