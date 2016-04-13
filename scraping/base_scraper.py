@@ -10,6 +10,7 @@ import codecs
 import sys
 import urllib
 from reppy.cache import RobotsCache
+import dryscrape
 
 class BaseScraper(object):
 	"""docstring for BaseScraper"""
@@ -40,14 +41,16 @@ class BaseScraper(object):
 	# url: URL of the age you'd like to fetch
 	# page: BeautifulSoup object of the requested page
 	def fetch(self, url):
+		print "Fetch:", url
 		time_to_sleep = max(0, self.last_fetch_time + self.delay - time.time())
 		time.sleep(time_to_sleep)
 		if self.crawl_rules.allowed(url, '*'):
-			r = requests.get(url, headers = self.headers)
+			driver = dryscrape.Session()
+			driver.visit(url)
 		else:
 			raise "FetchError"
 		self.last_fetch_time = time.time()
-		return BeautifulSoup(r.content)
+		return BeautifulSoup(driver.body())
 
 	# run() -> None
 	# The core logic of the class
@@ -64,10 +67,7 @@ class BaseScraper(object):
 					status = self.process(product_url, content)
 					if not status is False:
 						self.visited.add(product_url)
-						self.queue.append(product_url)
 			page = self.next()
-		for i in self.queue:
-			self.process(i, self.fetch(i))
 		self._close()
 
 	# next() -> url

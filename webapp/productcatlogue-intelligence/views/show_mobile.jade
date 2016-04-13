@@ -11,7 +11,8 @@ block content
 					div.caption
 						h3 #{mobile.name.substring(0,20)}...
 						p #{mobile.price.pop()}
-						p #{mobile.vendor}		
+						p #{mobile.vendor}	
+						button#update.btn.btn-success Resync
 	div.row
 		ul.nav.nav-tabs
 			li.active
@@ -84,6 +85,16 @@ block inPageScript
 					//data = eval("x = "+data);	
 					//InitChart(data,"visualisation");
 					drawChart(data);
+				});
+			});
+
+			$("#update").click(function(){
+				$.get("/mobiles/refresh/#{mobile._id}",function(data){
+					if(data == "Status : "){
+						alert("Resynced successfully.");
+						location.href = location.href;
+					} else
+						alert(data);
 				});
 			});
 		});

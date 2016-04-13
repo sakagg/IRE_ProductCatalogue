@@ -4,6 +4,8 @@ var mongoose = require('mongoose');
 var Mobile = mongoose.model('Mobile');
 var fs = require('fs');
 var filepath = "/Users/adityagaykar/Dropbox/Development/MtechCSE/Sem2/IRE/MajorProject/src/infibeam_dump_copy";
+var sys = require('sys');
+var exec = require('child_process').exec;
 
 
 /*Load mobiles*/
@@ -14,7 +16,6 @@ router.post('/load', function(req, res, next) {
 	  if (err || !data ) {
 	    error = true;
 	  }
-
 	  try{
 	  		var mobiles = data.split("*@*");
 		  for(var m of mobiles){
@@ -24,14 +25,15 @@ router.post('/load', function(req, res, next) {
 			  		continue;
 		  	(function(mobile){
 		  		var data = mobile.split("#@#");
-			  	var name = data[0],
+			  	var name = data[0],			  	
 			  	price = data[1],
 			  	vendor = data[2],
 			  	image = data[3],
 			  	description = data[4],
-			  	specs = data[5];
+			  	specs = data[5],
+			  	url = data[6];
 			  	//console.log(name+ " : "+ price +" : "+vendor);
-			  	
+
 			  	Mobile.findOne({
 			  		name: name,
 			  		vendor: vendor
@@ -41,23 +43,25 @@ router.post('/load', function(req, res, next) {
 			  			//console.log("inserting : "+name);
 		  				Mobile.create({
 					  		name: name,
+					  		url: url,
 					  		price: [price],
 					  		vendor: vendor,
 					  		image: image,
 					  		description: description,
 					  		specs: specs,
 					  		updated_on: [Date.now()]
-					  	},function(err,mobile){	  		
+					  	},function(err,mobile){
 					  		if(err)
 					  			console.log(err);
 					  		else
 					  			console.log("Mobile entered : "+mobile.name);
 					  	});
 		  			} else {
-		  				mobile.price.push(price);	  				
+		  				mobile.price.push(price);
 		  				mobile.updated_on.push(Date.now());
 			  			Mobile.update({_id: mobile._id},{
 			  				name: name,
+			  				url: url,
 					  		price: mobile.price,
 					  		vendor: mobile.vendor,
 					  		image: image,
@@ -69,30 +73,30 @@ router.post('/load', function(req, res, next) {
 					  			console.log(err);
 					  		else
 					  			console.log("Mobile updated : "+mobile.name);
-				  		});	
+				  		});
 		  			}
 			  	});
 		  	})(m);
-		  	
-		  	
-		  	
+
+
+
 		  }
 	  } catch(e){
 	  	 error = true;
-	  	 
+
 	  }
 	  if(error)
 	  	res.send("error");
 	  else
-		res.send("success");  
+		res.send("success");
 	  });
-	
+
 });
 
 /*GET mobile view*/
 router.get('/:id', function(req, res, next) {
 	var id = req.params.id;
-	var user = req.session.user;	
+	var user = req.session.user;
 	Mobile.findOne({_id : id}, function(err,data){
 		if(data){
 			Mobile.find({name: data.name},function(err,mobiles){
@@ -100,7 +104,7 @@ router.get('/:id', function(req, res, next) {
 				for (m of mobiles){
 					other_vendors.push(["/mobiles/"+m._id,m.price.pop(), m.vendor]);
 				}
-				var specs = data.specs.split("#~#");			
+				var specs = data.specs.split("#~#");
 				var spec_arr = [];
 				//console.log(specs);
 				for(spec of specs){
@@ -109,11 +113,17 @@ router.get('/:id', function(req, res, next) {
 						spec_arr.push(s);
 					})(spec2);
 				}
-				//console.log(spec_arr);			
+				//console.log(spec_arr);
 				res.render("show_mobile",{id: id, mobile: data, user: user, specs_data: spec_arr, other_vendors : other_vendors});
-			});			
+			});
 		}
 	});
+});
+
+router.get('/refresh/:id', function(req, res, next) {
+	var id = req.params.id;
+	function puts(error, stdout, stderr) {res.send("Status : "+stderr);}
+	exec("unset http_proxy; python ../../scraping/infibeam_scraper.py update " + id, puts);
 });
 
 /*GET stats*/
