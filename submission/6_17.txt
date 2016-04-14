@@ -1,0 +1,9 @@
+{
+  "github repo url" : "https://github.com/sakagg/IRE_ProductCatalogue",
+  "github project web page" : "http://sakagg.github.io/IRE_ProductCatalogue",
+  "youtube url" : "https://www.youtube.com/watch?v=ib3UerV6k3I",
+  "link to ppt" : "https://docs.google.com/presentation/d/1InVdzUe88wApJqgMwYdoYmPyzyJaK0Qb1JQAImiQ16Q/edit?usp=sharing",
+  "dropbox link to ppt, video, report" : "https://www.dropbox.com/sh/9g879rjhq46fgq2/AACve2mIUd7QmMRM28bsDWmXa?dl=0"
+}
+
+
